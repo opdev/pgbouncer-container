@@ -24,4 +24,3 @@ ADD entrypoint.sh .
 VOLUME ["/pgconf"]
 EXPOSE 5432
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/local/bin/pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
