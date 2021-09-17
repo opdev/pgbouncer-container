@@ -1,6 +1,13 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 ARG VERSION=1.16.0
 ENV USER_ID=1001
+ADD LICENSE /licenses/apache2
+LABEL name=pgbouncer \
+      vendor='Unknown' \
+      version=$VERSION \
+      release='stable' \
+      description='PgBouncer is a connection pooler for PostgreSQL' \
+      summary='PgBouncer pools connections to effectively improve performance of applications'
 
 RUN microdnf install -y make openssl-devel libevent libevent-devel pkgconfig automake autoconf gcc curl glibc-devel tar gzip && \
 
