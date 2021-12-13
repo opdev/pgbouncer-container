@@ -3,51 +3,52 @@ set -e
 pg_config_dir=/pgconf
 pg_bouncer_config=${pg_config_dir}/pgbouncer.ini
 pg_users_list=${pg_config_dir}/users.txt
-AUTH_TYPE=${AUTH_TYPE:-md5}
-DB_USER=${DB_USER:-postgres}
-DB_PASSWORD=${DB_PASSWORD:-postgres}
-DB_HOST=${DB_HOST:-postgres}
-DB_PORT=${DB_PORT:-5432}
+pg_auth_type=${PGBOUNCER_AUTH_TYPE:-md5}
+pg_user=${POSTGRESQL_USER:-postgres}
+pg_password=${POSTGRESQL_PASSWORD:-postgres}
+pg_host=${POSTGRESQL_HOST:-postgresql}
+pg_port=${PGBOUNCER_PORT:-5432}
 
 generate_pgbouncer_ini() {
 cat <<EOF> ${pg_bouncer_config}
 [databases]
-* = host=${DB_HOST} port=${DB_PORT} auth_user=${DB_USER}
+${PGBOUNCER_DATABASE} = host=${pg_host} port=${pg_port} auth_user=${pg_user}
 
 [pgbouncer]
-listen_port = ${DB_PORT}
-listen_addr = ${LISTEN_ADDR:-0.0.0.0}
-auth_type = ${AUTH_TYPE}
+listen_port = ${pg_port}
+listen_addr = ${PGBOUNCER_BIND_ADDRESS:-0.0.0.0}
+auth_type = ${pg_auth_type}
 auth_file = ${pg_users_list}
 auth_query = SELECT username, password from pgbouncer.get_auth(\$1)
 pidfile = /tmp/pgbouncer.pid
 logfile = /dev/stdout
-admin_users = ${DB_USER}
-stats_users = ${DB_USER}
-default_pool_size = ${DEFAULT_POOL_SIZE:-50}
-max_client_conn = ${MAX_CLIENT_CONN:-1000}
-max_db_connections = ${MAX_DB_CONNECTIONS:-50}
-min_pool_size = ${MIN_POOL_SIZE:-50}
-pool_mode = ${POOL_MODE:-transaction}
-reserve_pool_size = ${RESERVE_POOL_SIZE:-20}
+admin_users = ${pg_user}
+stats_users = ${pg_user}
+min_pool_size = ${PGBOUNCER_MIN_POOL_SIZE:-0}
+default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-20}
+max_client_conn = ${PGBOUNCER_MAX_CLIENT_CONN:-120}
+max_db_connections = ${PGBOUNCER_MAX_DB_CONNECTIONS:-0}
+pool_mode = ${PGBOUNCER_POOL_MODE:-transaction}
+reserve_pool_size = ${PGBOUNCER_RESERVE_POOL_SIZE:-0}
 reserve_pool_timeout = ${RESERVE_POOL_TIMEOUT:-240}
 query_timeout = ${QUERY_TIMEOUT:-60}
-ignore_startup_parameters = ${IGNORE_STARTUP_PARAMETERS:-extra_float_digits}
+idle_transaction_timeout = ${PGBOUNCER_IDLE_TRANSACTION_TIMEOUT:-0}
+ignore_startup_parameters = ${PGBOUNCER_IGNORE_STARTUP_PARAMETERS:-extra_float_digits}
 EOF
 }
 
 create_users_list() {
 cat <<EOF> ${pg_users_list}
-"${DB_USER}"     "${DB_PASSWORD}"
+"${pg_user}"     "${pg_password}"
 EOF
 }
 
 if [ ! -f "${pg_users_list}" ]
 then
   echo -n "Creating ${pg_users_list}... "
-  if [ "${AUTH_TYPE:-md5}" == "md5" ]
+  if [ "${pg_auth_type}" == "md5" ]
   then
-    DB_PASSWORD="md5$(echo -n "$DB_PASSWORD$DB_USER" | md5sum | cut -f 1 -d ' ')"
+    pg_password="md5$(echo -n "$pg_password$pg_user" | md5sum | cut -f 1 -d ' ')"
   fi
 
   create_users_list
