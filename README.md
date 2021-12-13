@@ -3,34 +3,36 @@ This repository intends to build a pgbouncer image that is based on Red Hat UBI 
 
 ## Environment Variables
 
-- `DB_USER`
+- `POSTGRESQL_USER` - The name of the user pgbouncer will use to connect to postgresql instance
 
-- `DB_PASSWORD`
+- `POSTGRESQL_PASSWORD` - The password of the user pgbouncer will use to connect to postgresql instance
 
-- `DB_PORT`
+- `POSTGRESQL_PORT` - The port pgbouncer will listen for connections on
 
-- `DB_HOST`
+- `POSTGRESQL_HOST` - The postgresql instance to connect to
 
-- `AUTH_TYPE`
+- `PGBOUNCER_AUTH_TYPE` - the protocol to use to authenticate users 
 
-- `DEFAULT_POOL_SIZE`
+- `DEFAULT_POOL_SIZE` - 
 
-- `IGNORE_STARTUP_PARAMETERS`
+- `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` - this is a list of parameters pgbouncer can not track in startup packets
 
-- `QUERY_TIMEOUT`
+- `QUERY_TIMEOUT` - queries running longer that this value will be cancelled
 
-- `RESERVE_POOL_TIMEOUT`
+- `RESERVE_POOL_TIMEOUT` - use additional connections from reserve pool if a client has not been serviced in this many seconds
 
-- `RESERVE_POOL_SIZE`
+- `PGBOUNCER_RESERVE_POOL_SIZE` - the number of additional connections to allow to a pool
 
-- `POOL_MODE`
+- `PGBOUNCER_POOL_MODE` - the pool mode specific to this database
 
-- `DEFAULT_POOL_SIZE`
+- `PGBOUNCER_DEFAULT_POOL_SIZE` - the number of connections to allow per user/database pair
 
-- `LISTEN_ADDR`
+- `PGBOUNCER_BIND_ADDRESS` - the address to which pgbouncer will bind to
 
-- `MAX_CLIENT_CONN`
+- `PGBOUNCER_MAX_CLIENT_CONN` - maximum number of client connections allowed
 
-- `MAX_DB_CONNECTIONS`
+- `PGBOUNCER_MAX_DB_CONNECTIONS` - maximum number of server connections to allow per user regardless of database
 
-- `MIN_POOL_SIZE`
+- `PGBOUNCER_MIN_POOL_SIZE` - minimum pool size for the database
+
+- `PGBOUNCER_DATABASE` - database for which the credentials allow access to
